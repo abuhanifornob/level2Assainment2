@@ -1,4 +1,5 @@
 import { Schema, model, connect } from "mongoose";
+
 import { TAddress, TFullName, TOrders, TUsers } from "./users.interface";
 
 const fullNameSchema = new Schema<TFullName>({
@@ -74,4 +75,4 @@ const usersSchema = new Schema<TUsers>({
   },
 });
 
-const Users = model<TUsers>("UserInformation", usersSchema);
+export const Users = model<TUsers>("UserInformation", usersSchema);
