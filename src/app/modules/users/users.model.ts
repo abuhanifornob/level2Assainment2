@@ -14,7 +14,7 @@ const fullNameSchema = new Schema<TFullName>({
 });
 
 const addressSchema = new Schema<TAddress>({
-  street: String,
+  street: { type: String, required: true },
   city: {
     type: String,
     required: true,
