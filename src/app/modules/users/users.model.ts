@@ -12,81 +12,93 @@ import {
   UserSchemaModel,
 } from "./users.interface";
 
+// Create Full Namme Schema
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your First Name"],
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your Last Name"],
   },
 });
 
+// Define Address Schema
 const addressSchema = new Schema<TAddress>({
   street: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your Street"],
   },
   city: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your City"],
   },
   country: {
     type: String,
-    required: true,
-  },
-});
-const orderSchema = new Schema<TOrders>({
-  productName: {
-    type: String,
-    required: true,
-  },
-  price: { type: Number, required: true },
-  quantity: {
-    type: Number,
-    required: true,
+    required: [true, "Please tell us your Country"],
   },
 });
 
+// oders Schema Define
+const orderSchema = new Schema<TOrders>({
+  productName: {
+    type: String,
+    required: [true, "Please tell us your Product Name"],
+  },
+  price: {
+    type: Number,
+    required: [true, "Please tell us your Product Price"],
+  },
+  quantity: {
+    type: Number,
+    required: [true, "Please tell us your Product Quntity"],
+  },
+});
+
+// Define Users Schema
 const usersSchema = new Schema<TUsers, UserSchemaModel>({
   userId: {
     type: Number,
-    required: true,
+    required: [true, "Please tell us your User Id"],
     unique: true,
   },
   username: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your User Name"],
     unique: true,
     min: 5,
     max: 20,
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your Password"],
     min: 5,
   },
   fullName: {
     type: fullNameSchema,
-    required: true,
+    required: [true, "Please tell us your Full Name"],
   },
   age: {
     type: Number,
-    required: true,
+    required: [true, "Please tell us your Age"],
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Please tell us your Email"],
     unique: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email address"],
   },
   isActive: {
     type: Boolean,
-    required: true,
+    required: [
+      true,
+      "Please tell us you Active or not . if you active then true otherwise false",
+    ],
   },
   hobbies: {
     type: [String],
-    required: true,
+    required: [true, "Please tell us your hobbies"],
   },
   address: addressSchema,
   orders: {
@@ -114,6 +126,7 @@ usersSchema.statics.isUserIdExits = async function (userId: number) {
   return userIdExits;
 };
 
+//  Ouer Users Model ..........
 export const Users = model<TUsers, UserSchemaModel>(
   "UserInformation",
   usersSchema

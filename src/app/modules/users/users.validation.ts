@@ -27,7 +27,7 @@ const usersValidationSchema = z.object({
   password: z.string().min(5),
   fullName: fullNameValidationSchema,
   age: z.number(),
-  email: z.string().min(1).email(),
+  email: z.string().email({ message: "Invalid email address" }),
   isActive: z.boolean(),
   hobbies: z.array(z.string().min(1)),
   address: addressValidationSchema,
