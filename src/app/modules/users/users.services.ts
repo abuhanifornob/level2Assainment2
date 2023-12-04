@@ -22,15 +22,14 @@ const createUserIntoDB = async (user: TUsers): Promise<TUsers> => {
   return responseUser;
 };
 
-const getAllUsersFromDB = async () => {
-  //   const result = await Users.find({}).select("userId username");
+const getAllUsersFromDB = async (): Promise<TUsers[]> => {
   const result = await Users.find(
     {},
     { username: 1, fullName: 1, age: 1, email: 1, address: 1 }
   );
   return result;
 };
-const getSingleUserIntoBD = async (userId: number) => {
+const getSingleUserIntoBD = async (userId: number): Promise<TUsers | null> => {
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.findOne(
       { userId: { $eq: userId } },
@@ -67,6 +66,7 @@ const updateOrdersIntoDB = async (userId: number, orders: TOrders) => {
 };
 
 const getUserOrdersFromDB = async (userId: number) => {
+  // Check This User id Exits in Our Existing  Model
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.findOne(
       { userId: { $eq: userId } },
@@ -78,11 +78,11 @@ const getUserOrdersFromDB = async (userId: number) => {
   }
 };
 const getUserOrderPriceFromDB = async (userId: number) => {
+  // Check This User id Exits in Our Existing  Model
   if (await Users.isUserIdExits(userId)) {
-    // Find the user by userId
     const user = await Users.findOne({ userId: { $eq: userId } });
     const userOrders = user?.orders;
-    // Calculate the total price of orders
+
     const totalPrice = userOrders?.reduce((sum, order) => {
       return sum + order.price * order.quantity;
     }, 0);
