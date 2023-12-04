@@ -66,10 +66,24 @@ const updateOrdersIntoDB = async (userId: number, orders: TOrders) => {
   }
 };
 
+const getUserOrdersFromDB = async (userId: number) => {
+  if (await Users.isUserIdExits(userId)) {
+    console.log("inside exits ", userId);
+    const result = await Users.findOne(
+      { userId: { $eq: userId } },
+      { orders: 1, _id: 0 }
+    );
+    return result;
+  } else {
+    throw new Error("Data Not Found");
+  }
+};
+
 export const UserServices = {
   createUserIntoDB,
   getUsersIntoDB,
   getSingleUserIntoBD,
   deleteSingleUseFromDB,
   updateOrdersIntoDB,
+  getUserOrdersFromDB,
 };
