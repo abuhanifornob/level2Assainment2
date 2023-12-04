@@ -1,6 +1,16 @@
-import { Schema, model, connect } from "mongoose";
+import { Schema, model, connect, Number } from "mongoose";
 
-import { TAddress, TFullName, TOrders, TUsers } from "./users.interface";
+import { config } from "dotenv";
+
+import bcrypt from "bcrypt";
+
+import {
+  TAddress,
+  TFullName,
+  TOrders,
+  TUsers,
+  UserSchemaModel,
+} from "./users.interface";
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
@@ -14,7 +24,10 @@ const fullNameSchema = new Schema<TFullName>({
 });
 
 const addressSchema = new Schema<TAddress>({
-  street: { type: String, required: true },
+  street: {
+    type: String,
+    required: true,
+  },
   city: {
     type: String,
     required: true,
@@ -25,14 +38,20 @@ const addressSchema = new Schema<TAddress>({
   },
 });
 const orderSchema = new Schema<TOrders>({
-  productName: String,
-  price: Number,
-  quantity: Number,
+  productName: {
+    type: String,
+    required: true,
+  },
+  price: { type: Number, required: true },
+  quantity: {
+    type: Number,
+    required: true,
+  },
 });
 
-const usersSchema = new Schema<TUsers>({
+const usersSchema = new Schema<TUsers, UserSchemaModel>({
   userId: {
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   },
@@ -75,4 +94,27 @@ const usersSchema = new Schema<TUsers>({
   },
 });
 
-export const Users = model<TUsers>("UserInformation", usersSchema);
+// This pree Middlewear make hash token .
+usersSchema.pre("save", async function (next) {
+  const user = this; // this is current document
+  const hash = await bcrypt.hash(user.password, 12); // 12 is hash slad
+  user.password = hash;
+  next();
+});
+
+// this pree middleware make password to empty String
+usersSchema.post("save", async function (doc, next) {
+  doc.password = "";
+  next;
+});
+
+// create static for check uese exits
+usersSchema.statics.isUserIdExits = async function (userId: number) {
+  const userIdExits = await Users.findOne({ userId }); // Check this user id avelavel or not
+  return userIdExits;
+};
+
+export const Users = model<TUsers, UserSchemaModel>(
+  "UserInformation",
+  usersSchema
+);
