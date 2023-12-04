@@ -22,7 +22,7 @@ const createUserIntoDB = async (user: TUsers): Promise<TUsers> => {
   return responseUser;
 };
 
-const getUsersIntoDB = async () => {
+const getAllUsersFromDB = async () => {
   //   const result = await Users.find({}).select("userId username");
   const result = await Users.find(
     {},
@@ -68,7 +68,6 @@ const updateOrdersIntoDB = async (userId: number, orders: TOrders) => {
 
 const getUserOrdersFromDB = async (userId: number) => {
   if (await Users.isUserIdExits(userId)) {
-    console.log("inside exits ", userId);
     const result = await Users.findOne(
       { userId: { $eq: userId } },
       { orders: 1, _id: 0 }
@@ -78,12 +77,28 @@ const getUserOrdersFromDB = async (userId: number) => {
     throw new Error("Data Not Found");
   }
 };
+const getUserOrderPriceFromDB = async (userId: number) => {
+  if (await Users.isUserIdExits(userId)) {
+    // Find the user by userId
+    const user = await Users.findOne({ userId: { $eq: userId } });
+    const userOrders = user?.orders;
+    // Calculate the total price of orders
+    const totalPrice = userOrders?.reduce((sum, order) => {
+      return sum + order.price * order.quantity;
+    }, 0);
+
+    return totalPrice?.toFixed(2);
+  } else {
+    throw new Error("Data Not Found");
+  }
+};
 
 export const UserServices = {
   createUserIntoDB,
-  getUsersIntoDB,
+  getAllUsersFromDB,
   getSingleUserIntoBD,
   deleteSingleUseFromDB,
   updateOrdersIntoDB,
   getUserOrdersFromDB,
+  getUserOrderPriceFromDB,
 };

@@ -23,9 +23,9 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
-const getUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.getUsersIntoDB();
+    const result = await UserServices.getAllUsersFromDB();
     res.status(200).json({
       success: true,
       message: "Users fetched successfully!",
@@ -132,11 +132,35 @@ const getOrders = async (req: Request, res: Response) => {
     });
   }
 };
+const getOrdersPrice = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    console.log("inside controllers userId", userId);
+    const result = await UserServices.getUserOrderPriceFromDB(Number(userId));
+    res.status(200).json({
+      success: true,
+      message: "Total price calculated successfully!",
+      data: {
+        totalPrice: result,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: "User not found",
+      error: {
+        code: 404,
+        description: "User not found!",
+      },
+    });
+  }
+};
 export const UserController = {
   createUser,
-  getUsers,
+  getAllUsers,
   getSingleUser,
   deleteSingleUser,
   updateOrder,
   getOrders,
+  getOrdersPrice,
 };
