@@ -127,7 +127,7 @@ usersSchema.post("save", async function (doc, next) {
 });
 
 // create static for check uese exits
-usersSchema.statics.isUserIdExits = async function (userId: number) {
+usersSchema.statics.isUserIdExits = async function (userId: string) {
   const userIdExits = await Users.findOne({ userId }); // Check this user id avelavel or not
   return userIdExits;
 };

@@ -7,8 +7,9 @@ import { object } from "zod";
 import { TOrders, TUsers } from "./users.interface";
 import { Users } from "./users.model";
 
-const createUserIntoDB = async (user: TUsers): Promise<TUsers> => {
+const createUserIntoDB = async (user: TUsers) => {
   const result = await Users.create(user);
+  // Create a new Object for Response
   const responseUser = {
     userId: result.userId,
     username: result.username,
@@ -25,11 +26,18 @@ const createUserIntoDB = async (user: TUsers): Promise<TUsers> => {
 const getAllUsersFromDB = async (): Promise<TUsers[]> => {
   const result = await Users.find(
     {},
-    { username: 1, fullName: 1, age: 1, email: 1, address: 1 }
+    {
+      username: 1,
+      fullName: 1,
+      age: 1,
+      email: 1,
+      address: 1,
+      _id: 0,
+    }
   );
   return result;
 };
-const getSingleUserFromBD = async (userId: number): Promise<TUsers | null> => {
+const getSingleUserFromBD = async (userId: string): Promise<TUsers | null> => {
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.findOne(
       { userId: { $eq: userId } },
@@ -41,13 +49,11 @@ const getSingleUserFromBD = async (userId: number): Promise<TUsers | null> => {
   }
 };
 
-const updateUserFromDB = async (userId: number, userData: TUsers) => {
+const updateUserFromDB = async (userId: string, userData: TUsers) => {
   if (await Users.isUserIdExits(userId)) {
-    console.log("user id inside the ", userId);
-    console.log("user id form Inside Update ", userData);
-
     const result = await Users.updateOne({ userId }, userData);
 
+    // Create a new Object for Response
     const responseUserUpdate = {
       userId: userData?.userId,
       username: userData?.username,
@@ -64,7 +70,7 @@ const updateUserFromDB = async (userId: number, userData: TUsers) => {
     throw new Error("Data Not Found");
   }
 };
-const deleteSingleUseFromDB = async (userId: number) => {
+const deleteSingleUseFromDB = async (userId: string) => {
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.deleteOne({ userId });
     return result;
@@ -73,7 +79,7 @@ const deleteSingleUseFromDB = async (userId: number) => {
   }
 };
 
-const updateOrdersIntoDB = async (userId: number, orders: TOrders) => {
+const updateOrdersIntoDB = async (userId: string, orders: TOrders) => {
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.updateOne(
       { userId: userId },
@@ -88,7 +94,7 @@ const updateOrdersIntoDB = async (userId: number, orders: TOrders) => {
   }
 };
 
-const getUserOrdersFromDB = async (userId: number) => {
+const getUserOrdersFromDB = async (userId: string) => {
   // Check This User id Exits in Our Existing  Model
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.findOne(
@@ -100,7 +106,7 @@ const getUserOrdersFromDB = async (userId: number) => {
     throw new Error("Data Not Found");
   }
 };
-const getUserOrderPriceFromDB = async (userId: number) => {
+const getUserOrderPriceFromDB = async (userId: string) => {
   // Check This User id Exits in Our Existing  Model
   if (await Users.isUserIdExits(userId)) {
     const user = await Users.findOne({ userId: { $eq: userId } });

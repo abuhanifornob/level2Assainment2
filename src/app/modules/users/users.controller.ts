@@ -43,7 +43,7 @@ const getAllUsers = async (req: Request, res: Response) => {
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     let { userId } = req.params;
-    const result = await UserServices.getSingleUserFromBD(Number(userId));
+    const result = await UserServices.getSingleUserFromBD(userId);
     res.status(200).json({
       success: true,
       message: "User fetched successfully!",
@@ -65,10 +65,7 @@ const updateUser = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const userData = req.body;
     const zodUserData = usersValidationSchema.parse(userData);
-    const result = await UserServices.updateUserFromDB(
-      Number(userId),
-      zodUserData
-    );
+    const result = await UserServices.updateUserFromDB(userId, zodUserData);
     res.status(200).json({
       success: true,
       message: "User updated successfully!",
@@ -113,10 +110,7 @@ const updateOrder = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const orders = req.body;
 
-    const result = await UserServices.updateOrdersIntoDB(
-      Number(userId),
-      orders
-    );
+    const result = await UserServices.updateOrdersIntoDB(userId, orders);
     res.status(200).json({
       success: true,
       message: "Order created successfully!",
@@ -137,7 +131,7 @@ const getOrders = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     console.log("getOrder User id is:", userId);
-    const result = await UserServices.getUserOrdersFromDB(Number(userId));
+    const result = await UserServices.getUserOrdersFromDB(userId);
     res.status(200).json({
       success: true,
       message: "Order fetched successfully!",
@@ -157,13 +151,13 @@ const getOrders = async (req: Request, res: Response) => {
 const getOrdersPrice = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    console.log("inside controllers userId", userId);
-    const result = await UserServices.getUserOrderPriceFromDB(Number(userId));
+
+    const result = await UserServices.getUserOrderPriceFromDB(userId);
     res.status(200).json({
       success: true,
       message: "Total price calculated successfully!",
       data: {
-        totalPrice: result,
+        totalPrice: Number(result).toFixed(2),
       },
     });
   } catch (error) {
