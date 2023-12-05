@@ -1,5 +1,5 @@
 # level2Assainment2
-Objective: Develop a Node.js Express application with TypeScript as the programming language, integrating MongoDB with Mongoose for user data and order management. Ensure data integrity through validation using Zod
+Objective: This Project uses Node.js Express application with TypeScript as the programming language, integrating MongoDB with Mongoose for user data and order management. For validation using Zod Validation 
 # Versel Preview Link:https://level2-assainment2-wuk63bwz6-abuhanifornob.vercel.app 
 # All Routes are for Post Ment Testing :
 1. ## POST Create a new user: http://localhost:5000/api/users
