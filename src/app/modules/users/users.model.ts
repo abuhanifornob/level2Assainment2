@@ -107,10 +107,10 @@ const usersSchema = new Schema<TUsers, UserSchemaModel>({
 });
 
 //Pre Hook for Query Middleware
-usersSchema.pre(/^find/, function (this: Query<TUsers, Document>, next) {
-  this.find({ isActive: { $eq: true } });
-  next();
-});
+// usersSchema.pre(/^find/, function (this: Query<TUsers, Document>, next) {
+//   this.find({ isActive: { $eq: true } });
+//   next();
+// });
 
 // This pree Middlewear make hash token .
 usersSchema.pre("save", async function (next) {

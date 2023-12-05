@@ -9,7 +9,7 @@ const createUser = async (req: Request, res: Response) => {
     const zodUserData = usersValidationSchema.parse(user); // Validation with ZoD
 
     const result = await UserServices.createUserIntoDB(zodUserData); // create a new user into DB
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: "User created successfully!",
       data: result,
@@ -43,13 +43,35 @@ const getAllUsers = async (req: Request, res: Response) => {
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     let { userId } = req.params;
-    const userIdNu = Number(userId);
-
-    const result = await UserServices.getSingleUserIntoBD(Number(userIdNu));
-
+    const result = await UserServices.getSingleUserFromBD(Number(userId));
     res.status(200).json({
       success: true,
       message: "User fetched successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "User not found",
+      error: {
+        code: 404,
+        description: "User not found!",
+      },
+    });
+  }
+};
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const userData = req.body;
+    const zodUserData = usersValidationSchema.parse(userData);
+    const result = await UserServices.updateUserFromDB(
+      Number(userId),
+      zodUserData
+    );
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully!",
       data: result,
     });
   } catch (error: any) {
@@ -159,6 +181,7 @@ export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
+  updateUser,
   deleteSingleUser,
   updateOrder,
   getOrders,

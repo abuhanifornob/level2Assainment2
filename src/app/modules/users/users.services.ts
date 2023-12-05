@@ -29,11 +29,11 @@ const getAllUsersFromDB = async (): Promise<TUsers[]> => {
   );
   return result;
 };
-const getSingleUserIntoBD = async (userId: number): Promise<TUsers | null> => {
+const getSingleUserFromBD = async (userId: number): Promise<TUsers | null> => {
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.findOne(
       { userId: { $eq: userId } },
-      { password: 0, orders: 0 }
+      { password: 0, orders: 0, _id: 0 }
     );
     return result;
   } else {
@@ -41,6 +41,29 @@ const getSingleUserIntoBD = async (userId: number): Promise<TUsers | null> => {
   }
 };
 
+const updateUserFromDB = async (userId: number, userData: TUsers) => {
+  if (await Users.isUserIdExits(userId)) {
+    console.log("user id inside the ", userId);
+    console.log("user id form Inside Update ", userData);
+
+    const result = await Users.updateOne({ userId }, userData);
+
+    const responseUserUpdate = {
+      userId: userData?.userId,
+      username: userData?.username,
+      fullName: userData?.fullName,
+      age: userData?.age,
+      email: userData?.email,
+      isActive: userData?.isActive,
+      hobbies: userData?.hobbies,
+      address: userData?.address,
+    };
+
+    return responseUserUpdate;
+  } else {
+    throw new Error("Data Not Found");
+  }
+};
 const deleteSingleUseFromDB = async (userId: number) => {
   if (await Users.isUserIdExits(userId)) {
     const result = await Users.deleteOne({ userId });
@@ -82,7 +105,6 @@ const getUserOrderPriceFromDB = async (userId: number) => {
   if (await Users.isUserIdExits(userId)) {
     const user = await Users.findOne({ userId: { $eq: userId } });
     const userOrders = user?.orders;
-
     const totalPrice = userOrders?.reduce((sum, order) => {
       return sum + order.price * order.quantity;
     }, 0);
@@ -96,7 +118,8 @@ const getUserOrderPriceFromDB = async (userId: number) => {
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
-  getSingleUserIntoBD,
+  getSingleUserFromBD,
+  updateUserFromDB,
   deleteSingleUseFromDB,
   updateOrdersIntoDB,
   getUserOrdersFromDB,
