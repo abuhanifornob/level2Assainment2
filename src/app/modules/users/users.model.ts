@@ -1,4 +1,4 @@
-import { Schema, model, connect, Number } from "mongoose";
+import { Schema, model, connect, Number, Query } from "mongoose";
 
 import { config } from "dotenv";
 
@@ -104,6 +104,12 @@ const usersSchema = new Schema<TUsers, UserSchemaModel>({
   orders: {
     type: [orderSchema],
   },
+});
+
+//Pre Hook for Query Middleware
+usersSchema.pre(/^find/, function (this: Query<TUsers, Document>, next) {
+  this.find({ isActive: { $eq: true } });
+  next();
 });
 
 // This pree Middlewear make hash token .
